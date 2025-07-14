@@ -21,24 +21,9 @@ from prompts import (
 )
 
 GPT_MODEL_ID = {
-    "gpt4": "gpt-4-1106-preview",
+    "gpt4": "gpt-4.1-nano-2025-04-14",
     "gpt35": "gpt-3.5-turbo-1106",
-    "xsum_2_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8nc8TgDp",
-    "xsum_10_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8nYmytb4",
-    "xsum_500_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8kP7i66k",
-    "xsum_always_1_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8nZloDpW",
-    "xsum_random_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8nZloDpW",
-    "xsum_readability_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8oLO7FOF",
-    "xsum_length_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8ooNDQYs",
-    "xsum_vowelcount_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8ooNNbtT",
-    "cnn_2_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8rX9zfcC",
-    "cnn_10_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8rXDPMYM",
-    "cnn_500_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8rYivqW8",
-    "cnn_always_1_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8rYwud4k",
-    "cnn_random_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8rYvYVKD",
-    "cnn_readability_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8rbOOAw9",
-    "cnn_length_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8rbPCDli",
-    "cnn_vowelcount_ft_gpt35": "ft:gpt-3.5-turbo-1106:nyu-arg::8raOJ2nT",
+    #"gpt4": "gpt-4-1106-preview"
 }
 
 load_dotenv()
@@ -54,7 +39,7 @@ def get_gpt_summary(article, dataset, model) -> str:
             "content": f"Article:\n{article}\n\nProvide only the summary with no other text.",
         },
     ]
-
+    #print(model)
     response = openai_client.chat.completions.create(
         model=model,
         messages=history,
@@ -71,7 +56,8 @@ def get_summary(article, dataset, model):
             dataset,
         )
     if model == "gpt4":
-        return get_gpt_summary(article, dataset, model="gpt-4-1106-preview")
+        #return get_gpt_summary(article, dataset, model="gpt-4-1106-preview")
+        return get_gpt_summary(article, dataset, model="gpt-4.1-nano-2025-04-14")
     if model.endswith("gpt35"):
         return (
             get_gpt_summary(
@@ -85,7 +71,7 @@ def get_summary(article, dataset, model):
 def get_claude_summary(article, dataset="xsum"):
     response_type = "highlights" if dataset in ["cnn", "dailymail"] else "summary"
     message = anthropic_client.beta.messages.create(
-        model="claude-2.1",
+        model="claude-3-5-haiku-latest",
         max_tokens=100,
         system=DATASET_SYSTEM_PROMPTS[dataset],
         messages=[
@@ -112,7 +98,7 @@ def get_claude_choice(summary1, summary2, article, choice_type) -> str:
             )
 
     message = anthropic_client.beta.messages.create(
-        model="claude-2.1",
+        model="claude-3-5-haiku-latest",
         max_tokens=10,
         system=system_prompt,
         messages=[{"role": "user", "content": prompt}],
@@ -125,7 +111,7 @@ def get_gpt_choice(
     summary2,
     article,
     choice_type,
-    model="gpt4-1106-preview",
+    model="gpt-4.1-nano-2025-04-14",
     return_logprobs=False,
 ) -> str:
     match choice_type:
@@ -168,6 +154,7 @@ def get_gpt_choice(
         logprobs=True,
         top_logprobs=2,
     )
+    #print(f"****** response:{response}*********")
     if return_logprobs:
         return response.choices[0].logprobs.content[0].top_logprobs
     return response.choices[0].message.content
@@ -190,7 +177,7 @@ def get_model_choice(
             summary2,
             article,
             choice_type,
-            model="gpt-4-1106-preview",
+            model="gpt-4.1-nano-2025-04-14",
             return_logprobs=return_logprobs,
         )
     if model.endswith("gpt35"):
@@ -236,7 +223,7 @@ def get_logprobs_choice_with_sources(
 ):
     if model == "gpt4":
         return get_gpt_choice_logprobs_with_sources(
-            summary1, summary2, source1, source2, article, "gpt-4-1106-preview"
+            summary1, summary2, source1, source2, article, "gpt-4.1-nano-2025-04-14"
         )
     if model.endswith("gpt35"):
         return get_gpt_choice_logprobs_with_sources(

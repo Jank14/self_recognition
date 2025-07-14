@@ -21,9 +21,11 @@ def generate_gpt_logprob_results(
     # For retrieving summaries, the specific fine-tuning version isn't needed
     exact_model = model
     model = "gpt35" if model.endswith("gpt35") else model
+    print(model)
 
     responses, articles, keys = load_data(dataset)
     results = []  # load_from_json(f"results/{model}_results.json")
+    #cnt =0 
 
     for key in keys[starting_idx:]:
         article = articles[key]
@@ -127,6 +129,9 @@ def generate_gpt_logprob_results(
                     )
 
             results.append(result)
+            #cnt+=1
+            #if cnt ==2:
+            #  break
     return results
 
 

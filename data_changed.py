@@ -2,7 +2,7 @@ import json
 from datasets import load_dataset
 import os
 
-SOURCES = ["gpt35", "gpt4","claude"]
+SOURCES = ["claude", "gpt35", "gpt4"]
 
 
 def save_to_json(dictionary, file_name):
@@ -22,14 +22,14 @@ def load_from_json(file_name) -> dict:
 
 def load_data(dataset):
     responses = {}
-    for source in SOURCES:
+    '''for source in SOURCES:
         responses[source] = load_from_json(
-            f"summaries/{dataset}/{source}_responses.json"
-        )
+            f"summaries/{dataset}_train_{source}_responses.json"
+        )'''
 
     articles = load_from_json(f"articles/{dataset}_train_articles.json")
     keys = list(articles.keys())
-    return responses, articles, keys
+    return articles, keys
 
 
 def load_cnn_dailymail_data():
